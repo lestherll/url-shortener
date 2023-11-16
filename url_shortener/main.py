@@ -2,14 +2,15 @@ import base64
 
 from fastapi import FastAPI, HTTPException
 from starlette.responses import RedirectResponse
+from pymemcache.client import base
 
 from url_shortener.models import UrlIn, UrlOut
 from url_shortener.url_shortener import shorten_url
+from url_shortener.settings import SETTINGS
 
 
 app = FastAPI()
-
-cache = {}
+cache = base.Client(SETTINGS.cache_dsn)
 db = {}
 
 @app.get("/")
@@ -23,7 +24,7 @@ async def create(url: UrlIn) -> UrlOut:
     short_url, url_hash = shorten_url(url.long_url)
 
     # store in cache and db
-    cache[url_hash] = url.long_url
+    cache.set(url_hash, url.long_url)
     db[url_hash] = url.long_url
 
     return UrlOut(url=short_url)
@@ -38,14 +39,19 @@ async def list_urls():
 async def check_url(short_url: str):
     # TODO: check if short url already exists in cache and database
     try:
-        url_hash = base64.urlsafe_b64decode(short_url)
+        url_hash = base64.urlsafe_b64decode(short_url).decode("utf-8")
         # check cache first and then db
-        long_url = cache.get(url_hash) or db.get(url_hash)            
+        long_url = cache.get(url_hash)           
+        if long_url is None:
+            long_url = db.get(url_hash)
+            
+        
         if long_url is None:
             raise HTTPException(status_code=404, detail="URL does not exist")
         else:
+            long_url = long_url.decode("utf-8")
             # update cache
-            cache[url_hash] = long_url
+            cache.set(url_hash, long_url)
 
     except base64.binascii.Error as e:
         # print(e)
@@ -55,3 +61,6 @@ async def check_url(short_url: str):
         return RedirectResponse(url=long_url, status_code=307)
 
 
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, reload=True)
