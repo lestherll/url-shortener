@@ -13,6 +13,7 @@ app = FastAPI()
 cache = base.Client(SETTINGS.cache_dsn)
 db = {}
 
+
 @app.get("/")
 async def index():
     return "pong"
@@ -41,11 +42,10 @@ async def check_url(short_url: str):
     try:
         url_hash = base64.urlsafe_b64decode(short_url).decode("utf-8")
         # check cache first and then db
-        long_url = cache.get(url_hash)           
+        long_url = cache.get(url_hash)
         if long_url is None:
             long_url = db.get(url_hash)
-            
-        
+
         if long_url is None:
             raise HTTPException(status_code=404, detail="URL does not exist")
         else:
@@ -56,11 +56,6 @@ async def check_url(short_url: str):
     except base64.binascii.Error as e:
         # print(e)
         raise HTTPException(status_code=404, detail="URL does not exist")
-    
+
     else:
         return RedirectResponse(url=long_url, status_code=307)
-
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, reload=True)
