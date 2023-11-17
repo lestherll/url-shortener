@@ -1,5 +1,8 @@
 # Liit 
-A simple URL Shortener API written in FastAPI.
+
+Liit (pronounced Li-it, Filipino word for little) is a minimal URL Shortener API written in Python using FastAPI.
+
+
 
 # Design
 |               |            |
