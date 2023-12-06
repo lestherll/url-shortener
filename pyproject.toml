@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "url-shortener"
 version = "0.1.0"
-description = ""
+description = "A minimal URL shortener using FastAPI"
 authors = ["Lesther Jr Llacuna <ljllacuna5@gmail.com>"]
 readme = "README.md"
 

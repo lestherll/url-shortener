@@ -3,13 +3,14 @@ import base64
 from fastapi import FastAPI, HTTPException
 from starlette.responses import RedirectResponse
 from pymemcache.client import base
+from tortoise.contrib.fastapi import register_tortoise
 
 from url_shortener.models import UrlIn, UrlOut
 from url_shortener.url_shortener import shorten_url
 from url_shortener.settings import SETTINGS
 
 
-app = FastAPI()
+app = FastAPI(title="Liit")
 cache = base.Client(SETTINGS.cache_dsn)
 db = {}
 
@@ -59,3 +60,10 @@ async def check_url(short_url: str):
 
     else:
         return RedirectResponse(url=long_url, status_code=307)
+
+
+register_tortoise(
+    app=app,
+    db_url=SETTINGS.db_dsn,
+    modules={"models": ["url_shortener.models"]}
+)
