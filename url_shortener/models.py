@@ -9,18 +9,35 @@ from tortoise.contrib.pydantic.creator import pydantic_model_creator
 
 class Url(models.Model):
     long_url = fields.TextField()
-    custom_url = fields.TextField()
-    
-    class PydanticMeta: ...
-    
+    short_url = fields.TextField()
+    custom_url = fields.CharField(max_length=6, unique=True, null=True)
+    url_hash = fields.TextField()
+    created_at = fields.DatetimeField()
 
-UrlIn = pydantic_model_creator(Url, name="UrlIn")
-
-
-# class UrlIn(BaseModel):
-#     long_url: str
-#     custom_url: t.Annotated[str | None, Query(max_length=6)] = None
+    class PydanticMeta:
+        ...
 
 
-class UrlOut(BaseModel):
-    url: str
+UrlIn = pydantic_model_creator(
+    Url,
+    name="UrlIn",
+    exclude=(
+        "id",
+        "url_hash",
+        "created_at",
+        "short_url"
+    ),
+    optional=("custom_url",)
+)
+
+UrlOut = pydantic_model_creator(
+    Url,
+    name="UrlOut",
+    # COMMENTED FOR DEBUGGIN PURPOSES
+    # exclude=(
+    #     "id",
+    #     "url_hash",
+    #     "created_at",
+    #     "custom_url",
+    # ),
+)
