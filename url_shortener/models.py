@@ -5,9 +5,10 @@ from pydantic import BaseModel
 from sqlalchemy import DateTime, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func
+from sqlalchemy.orm import declarative_base
 
-from url_shortener.base import Base
 
+Base = declarative_base()
 
 class Url(Base):
     __tablename__ = "url"
