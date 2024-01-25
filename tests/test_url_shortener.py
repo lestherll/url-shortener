@@ -14,8 +14,8 @@ from url_shortener.settings import SETTINGS
 
 test_engine = create_async_engine(
     SETTINGS.test_db_dsn,
-    # connect_args={"check_same_thread": False},
-    poolclass=StaticPool,
+    echo=True,
+    # poolclass=StaticPool,
 )
 
 TestingSessionLocal = sessionmaker(
@@ -31,7 +31,7 @@ async def override_get_session() -> AsyncSession:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await init_models(engine=test_engine)
+    # await init_models(engine=test_engine)
     yield
 
 

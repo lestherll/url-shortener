@@ -34,15 +34,16 @@ async def create_short_url(url: UrlIn, session: AsyncSession = Depends(get_sessi
     stmt = select(Url).where(Url.long_url == url.long_url)
     url_record = await session.scalar(stmt)
     short_url = base62.encode(url_record.id) if not url.short_url else url.short_url
-
-    stmt = update(Url).where(Url.id == url_record.id).values(short_url=short_url)
-    await session.execute(stmt)
+    
+    url_record.short_url = short_url
+    session.add(url_record)
+    response = UrlOut(long_url=url.long_url, short_url=short_url, created_at=url_record.created_at)
     await session.commit()
 
     # TODO: store in cache
-    cache.set(short_url, url_record)
+    cache.set(short_url, response)
 
-    return url_record
+    return response
 
 
 @router.get("/", response_model=list[UrlOut])
