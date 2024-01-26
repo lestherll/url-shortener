@@ -3,12 +3,11 @@ from datetime import datetime
 
 from pydantic import BaseModel
 from sqlalchemy import DateTime, Integer, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, declarative_base, mapped_column
 from sqlalchemy.sql import func
-from sqlalchemy.orm import declarative_base
-
 
 Base = declarative_base()
+
 
 class Url(Base):
     __tablename__ = "url"

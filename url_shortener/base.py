@@ -1,8 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from url_shortener.settings import SETTINGS
 from url_shortener.models import Base
+from url_shortener.settings import SETTINGS
 
 engine = create_async_engine(SETTINGS.db_dsn, echo=True)
 async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
