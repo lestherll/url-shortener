@@ -23,7 +23,9 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install ".[dev,test]"
+        pip install .
+        pip install ruff
+        pip install pytest pytest-asyncio pytest-cov httpx aiosqlite
     - name: Lint with Ruff
       run: |
         ruff --output-format=github .
