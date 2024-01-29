@@ -12,6 +12,9 @@ router = APIRouter(prefix="/urls", tags=["urls"])
 
 @router.post("/", response_model=UrlOut)
 async def create_short_url(url: UrlIn, session: AsyncSession = Depends(get_session)):
+    # TODO: return short url if long url already exists in db
+    # TODO: return 403 if custom url (short url) used in request already exists in the db
+    # TODO: do not allow custom url to be empty string
     url_record = Url(**url.model_dump())
     session.add(url_record)
     await session.flush()
@@ -28,6 +31,7 @@ async def create_short_url(url: UrlIn, session: AsyncSession = Depends(get_sessi
 
 @router.get("/", response_model=list[UrlOut])
 async def list_urls(session: AsyncSession = Depends(get_session)) -> list[UrlOut]:
+    # TODO: pagination
     result = await session.scalars(select(Url))
     return result.all()
 
