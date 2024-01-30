@@ -1,5 +1,7 @@
 # Liit 
 
+[![Tests](https://github.com/lestherll/url-shortener/actions/workflows/python-app.yml/badge.svg)](https://github.com/lestherll/url-shortener/actions/workflows/python-app.yml)
+
 Liit (pronounced Li-it, Filipino word for little) is a minimal URL Shortener API written in Python using FastAPI.
 
 
