@@ -25,7 +25,11 @@ async def create_short_url(url: UrlIn, session: AsyncSession = Depends(get_sessi
     session.add(url_record)
     response = UrlOut.model_validate(url_record)
 
-    cache.set(short_url, response)
+    try:
+        cache.set(short_url, response)
+    except ConnectionRefusedError as cre:
+        print(cre)
+
     return response
 
 
@@ -47,7 +51,10 @@ async def check_url(short_url: str, session: AsyncSession = Depends(get_session)
     # set result to cache if it exists in the database
     if result:
         response = UrlOut.model_validate(result)
-        cache.set(short_url, response)
+        try:
+            cache.set(short_url, response)
+        except ConnectionRefusedError as cre:
+            print(cre)
     else:
         raise HTTPException(status_code=404, detail="Short URL does not exist")
 
