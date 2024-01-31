@@ -34,7 +34,7 @@ def test_create_two_short_url(client: TestClient):
     assert response.status_code == 200
     assert response.json()["long_url"] == "https://google.com"
     assert response.json()["short_url"] == "1"
-    
+
     response = client.post("/urls/", json={"long_url": "https://youtube.com"})
     assert response.status_code == 200
     assert response.json()["long_url"] == "https://youtube.com"
@@ -71,7 +71,7 @@ def test_create_one_custom_short_url(client: TestClient):
             "short_url": "asdfgh",
         },
     )
-    
+
     assert response.status_code == 200
     assert response.json()["long_url"] == "https://google.com"
     assert response.json()["short_url"] == "asdfgh"
@@ -83,10 +83,25 @@ def test_create_short_url_with_existing_long_url(client: TestClient):
 
     duplicate_response = client.post("/urls/", json={"long_url": "https://google.com"})
     duplicate_json_response = duplicate_response.json()
-    
+
     assert first_json_response == duplicate_json_response
 
 
-@pytest.mark.skip(reason="Not implemented")
 def test_create_short_url_with_existing_custom_short_url(client: TestClient):
-    assert False
+    first_response = client.post(
+        "/urls/",
+        json={
+            "long_url": "https://google.com",
+            "short_url": "asdfgh",
+        },
+    )
+
+    second_response = client.post(
+        "/urls/",
+        json={
+            "long_url": "https://google.com",
+            "short_url": "asdfgh",
+        },
+    )
+    assert second_response.status_code == 409
+    assert second_response.json()["detail"] == "Custom short URL already exists"
