@@ -34,6 +34,11 @@ def test_create_two_short_url(client: TestClient):
     assert response.status_code == 200
     assert response.json()["long_url"] == "https://google.com"
     assert response.json()["short_url"] == "1"
+    
+    response = client.post("/urls/", json={"long_url": "https://youtube.com"})
+    assert response.status_code == 200
+    assert response.json()["long_url"] == "https://youtube.com"
+    assert response.json()["short_url"] == "2"
 
 
 def test_get_non_existent_short_url(client: TestClient):
@@ -72,9 +77,14 @@ def test_create_one_custom_short_url(client: TestClient):
     assert response.json()["short_url"] == "asdfgh"
 
 
-@pytest.mark.skip(reason="Not implemented")
 def test_create_short_url_with_existing_long_url(client: TestClient):
-    assert False
+    first_response = client.post("/urls/", json={"long_url": "https://google.com"})
+    first_json_response = first_response.json()
+
+    duplicate_response = client.post("/urls/", json={"long_url": "https://google.com"})
+    duplicate_json_response = duplicate_response.json()
+    
+    assert first_json_response == duplicate_json_response
 
 
 @pytest.mark.skip(reason="Not implemented")
