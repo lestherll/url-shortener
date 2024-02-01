@@ -12,10 +12,6 @@ router = APIRouter(prefix="/urls", tags=["urls"])
 
 @router.post("/", response_model=UrlOut)
 async def create_short_url(url: UrlIn, session: AsyncSession = Depends(get_session)):
-    # TODO: return short url if long url already exists in db
-    # TODO: return 403 if custom url (short url) used in request already exists in the db
-    # TODO: do not allow custom url to be empty string
-
     # check if long url exists first in db
     url_record = (
         await session.scalars(select(Url).where(Url.long_url == url.long_url))
