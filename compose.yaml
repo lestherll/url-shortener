@@ -5,16 +5,16 @@ services:
       context: .
       target: builder
     container_name: fastapi-application
-    environment:
-      PORT: 8000
+    # environment:
+    #   - CACHE_DSN=memcached:11211
     ports:
-      - '8000:8000'
+      - 8000:8000
     restart: "no"
     depends_on:
-      - cache
-  cache:
+      - memcached
+  memcached:
     platform: linux/arm64/v8
-    image: "memcached:latest"
+    image: memcached:latest
+    restart: always
     ports:
-      - '11211:11211'
-    command: ["memcached"]
+      - 11211:11211
