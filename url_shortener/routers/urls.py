@@ -55,7 +55,7 @@ async def list_urls(session: AsyncSession = Depends(get_session)) -> list[UrlOut
 @router.get("/{short_url}/", response_model=UrlOut)
 async def check_url(short_url: str, session: AsyncSession = Depends(get_session)):
     # Fetch result from cache first and then database
-    result = cache.get("short_url") or None
+    result = cache.get(short_url) or None
     if not result:
         stmt = select(Url).where(Url.short_url == short_url)
         result = await session.scalar(stmt) or None
